@@ -9,68 +9,27 @@ var autoprefixer = require('gulp-autoprefixer'),
     serveStatic = require('serve-static'),
     webpack = require('webpack-stream');
 
-// MongoDB
-var MongoClient = require('mongodb').MongoClient,
-    assert = require('assert');
-
-// URLS
-var mongoURL = 'mongodb://localhost:27017/chat-users',
-    userDataBase = [];
-
-MongoClient.connect(mongoURL, function(err, db) {
-    // Get the user once
-    var cursor = db.collection('users').find();
-    cursor.forEach((doc, err) => {
-        assert.equal(null, err);
-        userDataBase.push(doc);
-    });
-    db.close();
-});
-
-
-
-function handleHTTP(req, res, next) {
-    // console.log(req.url);
-    if (req.method == 'POST') {
-        req.on('data', function(data) {
-            var parseData = JSON.parse(data.toString());
-            console.log(parseData.userName, parseData.passWord);
-            var user = parseData.userName,
-                password = parseData.passWord,
-                arrLen = userDataBase.length;
-
-            var dataString = "0";
-            if (arrLen) {
-                for (var i = arrLen - 1; i >= 0; i--) {
-                    var ref = arrLen[i];
-                    if (ref.name === user) {
-                        if (ref.password === password) {
-                            console.log("passWord right");
-                            dataString = "2";
-                            break;
-                        } else {
-                            console.log("passWord wrong");
-                            dataString = "1";
-                            break;
-                        }
-                    }
-                }
-                console.log("does not exist");
-                dataString = "0";
-            } else {
-                console.log("no users in database");
-                dataString = "0";
-            }
-            res.write(dataString);
-            res.end();
-        });
-    }
-    next();
-};
-
 // Paths
 var sassPath = 'src/sass/**/*.scss',
     cssPath = 'dist/css/';
+
+
+// Server for chatting socket
+var server = require('http').createServer();
+var io = require('socket.io')(server);
+io.on('connection', function(client) {
+    client.on('chat_req', function(msg) {
+        console.log(msg);
+        client.emit('chat_rec', msg);
+    });
+
+    client.on('disconnect', function() {
+        console.log("disconnect");
+    });
+});
+
+
+server.listen(8080);
 
 // Watch all files when changing live 
 gulp.task('default', function() {
@@ -81,9 +40,8 @@ gulp.task('default', function() {
         server: {
             baseDir: './dist',
             middleware: [
-                history({ verbose: true }),
-                handleHTTP
-            ],
+                history({ verbose: true })
+            ]
         }
     });
     gulp.watch('./src/js/**/*.js', ['js-watch']);
@@ -121,4 +79,8 @@ gulp.task('sass', function() {
         .pipe(cleanCSS())
         .pipe(gulp.dest(cssPath))
         .pipe(browserSync.stream());
+});
+
+io.on("connect", () => {
+    console.log("user connected");
 });

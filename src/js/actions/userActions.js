@@ -1,40 +1,47 @@
-import axios from "axios";
+import io from 'socket.io-client';
 
-// Timeout variable
-const timeOut = 3000,
-    beforeLog = "Signing in...",
-    afterLog = "Failed to login";
+// Changable variables to handle
+const socketURL = "http://localhost:8080",
+    errorMsg = "Failed to connect to the server",
+    timeWait = 15000;
+
+// Define the socket connection
+let socket;
+
+// Handles the initial client connection
+const getSocketConnection = () => {
+    return new Promise((resolve, reject) => {
+        // Connect to server 8080
+        socket = io.connect(socketURL);
+        // After 30s, fail connection
+        const connectionTimeout = setTimeout(() => {
+            reject(errorMsg);
+            socket.disconnect();
+        }, timeWait);
+        // On connection
+        socket.on("connect", () => {
+            clearTimeout(connectionTimeout);
+            resolve();
+        });
+    });
+};
 
 // Handle the changes for user details
-export function logUser(type, value) {
-    return (dispatch) => dispatch({ type: type, payload: value });
-}
-
-// Validate the user details with server
-export function validateUser(userObj) {
+export function logUser(name) {
     return (dispatch) => {
-        dispatch({ type: "LOG_DETAILS", payload: beforeLog });
-        axios({
-                method: 'post',
-                url: '/loguser',
-                data: {
-                    "userName": userObj.userName,
-                    "passWord": userObj.passWord
-                }
-            }).then((response) => {
-                if (!response.data) dispatch({ type: "LOG_DETAILS", payload: afterLog });
-                // setTimeout(() => {
-                //     dispatch({ type: "LOG_DETAILS", payload: "" });
-                // }, timeOut);
+        getSocketConnection()
+            .then(() => dispatch({ type: "LOG_USER_USER", payload: { name: name } }))
+            .then(() => {
+                // Listen for chat messages
+                socket.on("chat_rec", (msg) => dispatch({ type: "UPDATE_CHAT", payload: msg }));
             })
-            .catch((error) => console.log(error));
+            .catch((error) => {
+                console.log(error);
+            });
     }
 }
 
-export function changeForm(arg) {
-    return (dispatch) => {
-        let status = (arg) ? false : true;
-        console.log(arg, status);
-        dispatch({ type: "FORM_STATUS", payload: status });
-    }
+// Handle sending messages
+export function sendMsg(msg, name) {
+    socket.emit("chat_req", msg);
 }
