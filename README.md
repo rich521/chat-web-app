@@ -14,4 +14,4 @@ Chat application using WebSocket, ServiceWorker, React + Redux
 	* To minify bundle.js for production, go to webpack.js in root file and set DEBUG === production & vice versa for development mode.
 	* Run "Webpack" in terminal to go into production mode
 5. Turn to "http://localhost:3000/" in your browser (Terminal and browser on same device)
-6. Turn to 'External: http://192...' for extenal devices. This URL will be shown when you run 'gulp public' or 'gulp' in the terminal. Should be under 'Access URLs:'
+6. Turn to "External: http://192..." for extenal devices. This URL will be shown when you run 'gulp public' or 'gulp' in the terminal. Should be under 'Access URLs:'
