@@ -20,7 +20,7 @@ var io = require('socket.io')(server);
 io.on('connection', function(client) {
     client.on('chat_req', function(msg) {
         console.log(msg);
-        client.emit('chat_rec', msg);
+        io.emit('chat_rec', msg);
     });
 
     client.on('disconnect', function() {
@@ -35,6 +35,7 @@ server.listen(8080);
 gulp.task('default', function() {
     browserSync.init({
         browser: 'google chrome',
+        ghostMode: false,
         open: false,
         port: 3000,
         server: {
@@ -52,6 +53,7 @@ gulp.task('default', function() {
 gulp.task('public', function() {
     browserSync.init({
         browser: "google chrome",
+        ghostMode: false,
         server: "./dist"
     });
 });

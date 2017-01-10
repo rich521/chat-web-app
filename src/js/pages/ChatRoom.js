@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
-import * as userActions from "../actions/userActions";
+import { sendMsg } from "../actions/userActions";
+import TopBar from "../components/TopBar";
 
 @connect((store) => {
     return {
@@ -15,43 +16,64 @@ export default class ChatRoom extends React.Component {
         const { userObjuser, router } = this.props;
         if (userObjuser === "") router.push("/");
     }
-
     // Handle sending messages
     handleClick(event) {
         event.preventDefault();
         const { chat } = this.refs;
         if (!chat.value) return;
-        userActions.sendMsg(chat.value, this.props.userObjuser);
+        sendMsg(chat.value, this.props.userObjuser.name);
         chat.value = "";
     }
 
+    componentDidUpdate(){
+        // Scroll to the bottom
+        window.scrollTo(0, this.refs.scroll.scrollHeight);
+    }
+
     render() {
-        const { chatHistory } = this.props;
-        const val = -30; // Only load the last 30 lines of chat log
+        const { chatHistory, userObjuser } = this.props;
+        const val = -100; // Only load the last 100 lines of chat log
 
         return (
             <div class="chat-container">
-                <h1>Chat Room</h1>
+                <TopBar name={userObjuser.name}/>
                 <div class="chat-log">
-                    <button>Show More</button>
-                    <ul>
-                        <li>Welcome to chat app. Type & Enter to talk to people</li>
+                    <ul ref="scroll">
+                        <li class="other-msg">
+                            <div class="msg">
+                                <h3>Admin</h3>
+                                <p>Welcome to chat app. Type & Enter to talk to people</p>
+                            </div>
+                        </li>
                         {chatHistory.slice(val).map((item, i) => {
-                            return <li key={i}>{item}</li>
+                            let check = (item.name === userObjuser.name)? true : false;
+                            return (
+                                <li key={i} class={(check)? "self-msg":"other-msg"}>
+                                    <div class="msg">
+                                        { (check)? <h3></h3>:<h3>{item.name}</h3>}
+                                        <p>{item.msg}</p>
+                                        <div>{item.date}</div>
+                                    </div>
+                                </li>
+                            );
                         })}
                     </ul>
                 </div>
-                <div class="chat-input">
-                    <form>
-                        <label for="chat-input">Chat Input</label>
-                        <input type="text" id="chat-input" name="Chat Input" required="required" ref="chat" autoFocus/>
-                        <button type="submit" 
-                                class="btn btn-primary btn-block btn-large" 
-                                onClick={this.handleClick.bind(this)}>
-                                Send
-                        </button>
-                    </form>
-                </div>
+                <form class="chat-input">
+                    <label for="chat-input" class="hidden">Chat Input</label>
+                    <input type="text" 
+                           id="chat-input"
+                           name="Chat Input" 
+                           required="required"
+                           ref="chat"
+                           placeholder="Type here to chat"
+                           autoFocus />
+                    <button type="submit" 
+                            class="btn-send" 
+                            onClick={this.handleClick.bind(this)}>
+                            Send
+                    </button>
+                </form>
             </div>
         );
     }

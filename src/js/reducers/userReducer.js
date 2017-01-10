@@ -1,8 +1,9 @@
 export default function reducer(state = {
     userObjuser: "",
     chatHistory: [],
+    validation: "",
 }, action) {
-    var cases = {
+    const cases = {
         "LOG_USER_USER": {
             ...state,
             userObjuser: action.payload
@@ -10,6 +11,10 @@ export default function reducer(state = {
         "UPDATE_CHAT": {
             ...state,
             chatHistory: [...state.chatHistory, action.payload]
+        },
+        "UPDATE_VALIDATION": {
+            ...state,
+            validation: action.payload
         }
     };
 

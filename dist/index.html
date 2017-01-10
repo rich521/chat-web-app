@@ -4,14 +4,34 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
     <meta name="description" content="Chat Application React">
     <meta name="author" content="Richard Strutt">
     <title>Chat Application</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" sizes="192x192" href="./img/homescreen192.png">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:300" rel="stylesheet">
     <link href="/css/styles.css" rel="stylesheet">
- </head>
+</head>
 
 <body>
+    <script type="text/javascript">
+    _registerServiceWorker();
+
+    function _registerServiceWorker() {
+        if (!navigator.serviceWorker) return;
+        navigator.serviceWorker.register('/js/sw.js', {
+                scope: './js/'
+            })
+            .then(function(reg) {
+                // registration worked
+                console.log('Registration succeeded. Scope is ' + reg.scope);
+            }).catch(function(error) {
+                // registration failed
+                console.log('Registration failed with ' + error);
+            });
+    }
+    </script>
     <div id="app"></div>
     <script src="/js/bundle.min.js"></script>
 </body>
