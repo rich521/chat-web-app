@@ -1,5 +1,4 @@
 var autoprefixer = require('gulp-autoprefixer'),
-    axios = require("axios"),
     browserSync = require('browser-sync'),
     cleanCSS = require('gulp-clean-css'),
     gulp = require('gulp'),
