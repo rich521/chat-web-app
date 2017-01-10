@@ -1,7 +1,7 @@
 import io from 'socket.io-client';
 
 // Changable variables to handle
-const socketURL = "http://192.168.1.211:8080",
+const socketURL = "http://127.0.0.1:8080",
     errorMsg = "Failed to connect to the server",
     timeWait = 15000;
 

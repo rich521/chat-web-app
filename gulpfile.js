@@ -12,7 +12,6 @@ var autoprefixer = require('gulp-autoprefixer'),
 var sassPath = 'src/sass/**/*.scss',
     cssPath = 'dist/css/';
 
-
 // Server for chatting socket
 var server = require('http').createServer();
 var io = require('socket.io')(server);
