@@ -8,12 +8,12 @@ self.addEventListener('install', function(event) {
                     '/js/bundle.min.js',
                     '/css/styles.css',
                     '/img/user.svg',
-                    'imgs/homescreen48.png',
-                    'imgs/homescreen72.png',
-                    'imgs/homescreen96.png',
-                    'imgs/homescreen144.png',
-                    'imgs/homescreen168.png',
-                    'imgs/homescreen192.png'
+                    '/img/homescreen48.png',
+                    '/img/homescreen72.png',
+                    '/img/homescreen96.png',
+                    '/img/homescreen144.png',
+                    '/img/homescreen168.png',
+                    '/img/homescreen192.png'
                 ])
                 .then(function() {
                     self.skipWaiting();
